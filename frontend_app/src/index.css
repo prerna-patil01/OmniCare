@@ -1,0 +1,310 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   OmniCare Design System — Tailwind v4 (CSS-first)
+
+   LIGHT : powdered blue · soft rich blue · nude sand
+   DARK  : rich black · sky blue · pure white
+
+   TYPE  : Times New Roman throughout. A serif operating system —
+           editorial, calm, and deliberately unlike every other
+           AI-era healthcare product.
+   ───────────────────────────────────────────────────────────── */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-sans: "Times New Roman", Times, serif;
+  --font-display: "Times New Roman", Times, serif;
+  --font-brand: "Times New Roman", Times, serif;
+  --font-editorial: "Times New Roman", Times, serif;
+
+  /* Display scale — headlines have room to actually be loud */
+  --text-mega: 72px;
+  --text-mega--line-height: 0.98;
+  --text-mega--letter-spacing: -0.025em;
+  --text-mega--font-weight: 700;
+
+  --text-hero: 56px;
+  --text-hero--line-height: 1.04;
+  --text-hero--letter-spacing: -0.022em;
+  --text-hero--font-weight: 700;
+
+  --text-display: 42px;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.018em;
+  --text-display--font-weight: 700;
+
+  --text-section: 32px;
+  --text-section--line-height: 1.18;
+  --text-section--letter-spacing: -0.012em;
+  --text-section--font-weight: 700;
+
+  --text-cardtitle: 23px;
+  --text-cardtitle--line-height: 1.28;
+  --text-cardtitle--letter-spacing: -0.006em;
+  --text-cardtitle--font-weight: 700;
+
+  --text-numeral: 40px;
+  --text-numeral--line-height: 1;
+  --text-numeral--letter-spacing: -0.02em;
+  --text-numeral--font-weight: 700;
+
+  /* ── Light: deep-blue scale ──────────────────────────────── */
+  --color-navy-950: #22314A;
+  --color-navy-900: #2A3B57;
+  --color-navy-800: #33486A;
+  --color-navy-700: #4A72B2;  /* primary brand blue */
+  --color-navy-600: #5B84C4;
+  --color-navy-500: #7FA5D6;
+
+  /* ── Powder / sky-blue accent scale ──────────────────────── */
+  --color-azure-700: #3C5E96;
+  --color-azure-600: #4A72B2;
+  --color-azure-500: #6E9BDA;
+  --color-azure-400: #8FB2E3;
+  --color-azure-300: #AECBF0;
+  --color-azure-200: #CFE0F2;
+  --color-azure-100: #E5EEF9;
+  --color-azure-50:  #F4F8FD;
+
+  /* ── Cool neutrals ───────────────────────────────────────── */
+  --color-mist-50:  #F7FAFD;
+  --color-mist-100: #EEF4FB;
+  --color-mist-200: #E1EBF5;
+  --color-mist-300: #CDDBEA;
+  --color-mist-400: #A9BDD3;
+
+  /* ── Nude / sand — warmth so the blue never goes clinical ── */
+  --color-sand-50:  #FAF7F3;
+  --color-sand-100: #F2EDE5;
+  --color-sand-200: #E6DCCE;
+  --color-sand-300: #D3C3AF;
+
+  /* ── Vitals — desaturated, readable, never neon ──────────── */
+  --color-vital-green: #3E8768;
+  --color-vital-amber: #B9853C;
+  --color-vital-red:   #C85B56;
+  --color-vital-teal:  #418F8A;
+
+  /* ── Semantic tokens (theme-aware) ───────────────────────── */
+  --color-bg:          var(--oc-bg);
+  --color-surface:     var(--oc-surface);
+  --color-card:        var(--oc-card);
+  --color-line:        var(--oc-line);
+  --color-line-strong: var(--oc-line-strong);
+  --color-fg:          var(--oc-fg);
+  --color-fg-soft:     var(--oc-fg-soft);
+  --color-fg-muted:    var(--oc-fg-muted);
+  --color-brand:       var(--oc-brand);
+  --color-brand-hover: var(--oc-brand-hover);
+  --color-brand-soft:  var(--oc-brand-soft);
+  --color-glass:       var(--oc-glass);
+
+  /* ── Radius ──────────────────────────────────────────────── */
+  --radius-card: 24px;
+  --radius-xl2: 28px;
+  --radius-lg2: 20px;
+  --radius-md2: 14px;
+
+  /* ── Elevation ───────────────────────────────────────────── */
+  --shadow-soft: 0 1px 2px rgba(42, 59, 87, 0.03), 0 10px 30px -14px rgba(42, 59, 87, 0.14);
+  --shadow-lift: 0 2px 6px rgba(42, 59, 87, 0.05), 0 30px 60px -24px rgba(42, 59, 87, 0.22);
+  --shadow-glow: 0 20px 60px -24px rgba(74, 114, 178, 0.42);
+
+  /* ── Motion ──────────────────────────────────────────────── */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LIGHT — powdered blue, morning light, ink-dark type
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  --oc-bg: #EEF4FB;
+  --oc-surface: #E5EDF7;
+  --oc-card: #FFFFFF;
+  --oc-line: #DFE9F4;
+  --oc-line-strong: #C8D8EA;
+  --oc-fg: #0E1626;        /* near-black ink, faint blue cast */
+  --oc-fg-soft: #33455F;   /* body copy — genuinely readable */
+  --oc-fg-muted: #64789A;  /* labels and captions, still legible */
+  --oc-brand: #4A72B2;
+  --oc-brand-hover: #3C5E96;
+  --oc-brand-soft: #E9F1FA;
+  --oc-glass: rgba(255, 255, 255, 0.76);
+  color-scheme: light;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DARK — rich black, sky blue, pure white
+   ══════════════════════════════════════════════════════════════ */
+.dark {
+  --oc-bg: #0A0C10;          /* rich black, faintest blue cast */
+  --oc-surface: #12161C;
+  --oc-card: #161B23;        /* cards lift off black, not into navy */
+  --oc-line: #232A34;
+  --oc-line-strong: #333C49;
+  --oc-fg: #FFFFFF;          /* pure white — maximum clarity */
+  --oc-fg-soft: #C8D2DE;
+  --oc-fg-muted: #8592A2;
+  --oc-brand: #6EC5F5;       /* sky blue — the one accent */
+  --oc-brand-hover: #93D6F9;
+  --oc-brand-soft: rgba(110, 197, 245, 0.11);
+  --oc-glass: rgba(22, 27, 35, 0.76);
+  color-scheme: dark;
+
+  /* Remap the shared blue scale to sky-blue so components need
+     no dark-specific classes — one accent, applied everywhere. */
+  --color-azure-300: #93D6F9;
+  --color-azure-400: #6EC5F5;
+  --color-azure-500: #4FB4EF;
+  --color-azure-600: #2FA3E8;
+  --color-azure-700: #1B8FD4;
+  --color-navy-700: #6EC5F5;
+  --color-navy-800: #1B2029;
+  --color-navy-900: #12161C;
+  --color-mist-200: #232A34;
+  --color-mist-300: #333C49;
+
+  /* Vitals brighten on black — the light-mode values go muddy */
+  --color-vital-green: #5FC79A;
+  --color-vital-amber: #E5B269;
+  --color-vital-red:   #F08A84;
+  --color-vital-teal:  #62C4BE;
+
+  /* Shadows go black — blue-tinted shadows read as haze on black */
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px -14px rgba(0, 0, 0, 0.7);
+  --shadow-lift: 0 2px 6px rgba(0, 0, 0, 0.45), 0 30px 60px -24px rgba(0, 0, 0, 0.85);
+  --shadow-glow: 0 20px 70px -26px rgba(110, 197, 245, 0.45);
+}
+
+@layer base {
+  * { border-color: var(--oc-line); }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Serif needs a touch more air at UI sizes than a grotesque does. */
+  body {
+    margin: 0;
+    background-color: var(--oc-bg);
+    color: var(--oc-fg);
+    font-family: var(--font-sans);
+    letter-spacing: 0.005em;
+    transition: background-color 0.5s var(--ease-out-soft), color 0.5s var(--ease-out-soft);
+  }
+
+  ::selection {
+    background: var(--color-azure-200);
+    color: var(--color-navy-900);
+  }
+
+  /* Vitals must never jitter as they update */
+  .tabular,
+  input[inputmode="numeric"],
+  input[inputmode="decimal"] {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  /* ── Typographic voices ──────────────────────────────────── */
+
+  /* The wordmark. */
+  .font-brand {
+    font-family: var(--font-brand);
+    letter-spacing: -0.01em;
+  }
+
+  /* Editorial emphasis — italic serif inside a headline. */
+  .font-editorial {
+    font-family: var(--font-editorial);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .type-mega em.serif,
+  .type-hero em.serif,
+  .type-display em.serif {
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .type-mega {
+    font-family: var(--font-display);
+    font-size: clamp(46px, 5.4vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+
+  .type-hero {
+    font-family: var(--font-display);
+    font-size: clamp(38px, 4vw, 56px);
+    line-height: 1.06;
+    letter-spacing: -0.022em;
+    font-weight: 700;
+  }
+
+  .type-display {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 3vw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.018em;
+    font-weight: 700;
+  }
+
+  .type-section {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    font-weight: 700;
+  }
+
+  /* Big vital numerals — heavy, tight, tabular */
+  .type-numeral {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Small caps label — the quiet counterweight to loud headlines.
+     Serif needs wider tracking here than a sans would. */
+  .type-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+  }
+
+  /* ── Surfaces ────────────────────────────────────────────── */
+  .glass {
+    background: var(--oc-glass);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+  }
+
+  .grid-mesh {
+    background-image:
+      linear-gradient(rgba(74, 114, 178, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74, 114, 178, 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .dark .grid-mesh {
+    background-image:
+      linear-gradient(rgba(110, 197, 245, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(110, 197, 245, 0.05) 1px, transparent 1px);
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
