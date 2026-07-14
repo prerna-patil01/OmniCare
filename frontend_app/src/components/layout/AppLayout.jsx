@@ -4,7 +4,7 @@ import Header from "./Header";
 import EmergencyFab from "./EmergencyFab";
 import { pageTransition } from "../../lib/motion";
 
-/** The OS shell: sticky chrome, animated page body, persistent SOS. */
+/** The OS shell: sticky chrome, animated body, persistent Omni + SOS. */
 export default function AppLayout() {
   const location = useLocation();
 
@@ -19,7 +19,7 @@ export default function AppLayout() {
           initial="initial"
           animate="animate"
           exit="exit"
-          className="mx-auto max-w-[1560px] px-6 py-10 lg:px-10 lg:py-12"
+          className="mx-auto max-w-[1560px] px-6 py-7 lg:px-8 lg:py-8"
         >
           <Outlet />
         </motion.main>

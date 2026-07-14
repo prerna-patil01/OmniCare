@@ -92,7 +92,7 @@ export default function Register() {
         >
           <StepIndicator steps={STEPS} current={step} />
 
-          <div className="relative overflow-hidden">
+          <div className="relative">
             <AnimatePresence mode="wait" custom={dir} initial={false}>
               <motion.div
                 key={step}
