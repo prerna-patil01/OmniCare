@@ -14,23 +14,22 @@ import { EASE } from "../../lib/motion";
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const sessionId = `USER: ${DEMO_USER.name.split(" ")[0].toUpperCase()} // PATIENT PROFILE`;
+  const session = `${DEMO_USER.name.split(" ")[0].toUpperCase()} // PATIENT`;
 
   return (
     <header className="sticky top-0 z-50 border-b border-line glass">
-      <div className="mx-auto flex h-[76px] max-w-[1560px] items-center gap-6 px-6 lg:px-10">
+      <div className="mx-auto flex h-[78px] max-w-[1560px] items-center gap-6 px-6 lg:px-10">
         <button onClick={() => navigate("/dashboard")} className="shrink-0 outline-none">
-          <Logo size={38} />
+          <Logo size="sm" />
         </button>
 
-        <div className="hidden max-w-[420px] flex-1 xl:block">
+        <div className="hidden max-w-[400px] flex-1 xl:block">
           <UniversalSearch />
         </div>
 
         <div className="ml-auto flex items-center gap-2.5">
-          {/* Context identity — session state, top right */}
-          <span className="mr-1 hidden rounded-full border border-line bg-surface/70 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.14em] text-fg-muted lg:block">
-            {sessionId}
+          <span className="mr-1 hidden rounded-full border border-line bg-surface/70 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.16em] text-fg-muted lg:block">
+            {session}
           </span>
 
           <button
@@ -80,7 +79,7 @@ export default function Header() {
                       <motion.span
                         layoutId="nav-underline"
                         transition={{ duration: 0.35, ease: EASE }}
-                        className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-navy-700"
+                        className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-ink-700"
                       />
                     )}
                   </>
@@ -112,8 +111,8 @@ export default function Header() {
                         cn(
                           "flex items-center gap-3 rounded-[14px] px-3.5 py-3 text-[16px] font-bold transition-colors",
                           isActive
-                            ? "bg-brand-soft text-navy-700"
-                            : "text-fg-soft hover:bg-mist-50 dark:hover:bg-navy-800"
+                            ? "bg-brand-soft text-ink-700"
+                            : "text-fg-soft hover:bg-surface"
                         )
                       }
                     >

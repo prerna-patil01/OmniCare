@@ -1,4 +1,4 @@
-/** Local demo state for the Innovation Grid. Frontend-only. */
+/** Local demo state. Frontend-only — no backend, no APIs. */
 
 export const VITALS = [
   { key: "hr",    label: "Heart Rate", value: "72",  unit: "bpm", delta: "+2",   tone: "red" },
@@ -30,6 +30,8 @@ export const FULFILLMENT = {
     status: "BOOKED",
     eta: "6 min",
     destination: "Apollo Hospitals, Jubilee Hills",
+    lat: 17.4239,
+    lng: 78.4738,
   },
   care: [
     { role: "Home Nurse",  name: "Sr. Kavitha R.", rate: "₹340/hr", available: "Now" },

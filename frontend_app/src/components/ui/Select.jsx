@@ -78,7 +78,7 @@ export default function Select({
               animate={{ opacity: 1, y: 8, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.985 }}
               transition={{ duration: 0.22, ease: EASE }}
-              className="absolute z-60 w-full overflow-hidden rounded-[18px] border border-line bg-card shadow-lift"
+              className="absolute z-0 w-full overflow-hidden rounded-[18px] border border-line bg-card shadow-lift"
             >
               <ul
                 ref={listRef}
