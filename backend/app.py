@@ -3,9 +3,7 @@ OmniCare backend.
 
     python app.py    →  http://localhost:5000
 
-Boots, seeds, and serves. If GEMINI_API_KEY is missing the AI layer runs in mock
-mode — the app still works, which matters, because a rate limit at 4pm on demo
-day should not be able to kill your product.
+Boots and serves the OmniCare API.
 """
 
 import logging
@@ -13,6 +11,7 @@ import os
 
 from flask import Flask, jsonify
 from flask_cors import CORS
+from sqlalchemy import inspect, text
 
 from config import Config
 from extensions import db
@@ -33,9 +32,10 @@ def create_app(config=Config):
 
     CORS(
         app,
-        origins=app.config["CORS_ORIGINS"],
+        resources={r"/api/*": {"origins": r"http://localhost:*"}},
         supports_credentials=True,
         allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     )
 
     os.makedirs(app.config["UPLOAD_DIR"], exist_ok=True)
@@ -47,15 +47,26 @@ def create_app(config=Config):
     for bp in BLUEPRINTS:
         app.register_blueprint(bp)
 
+    # Initialise the local schema for all supported startup modes (script, WSGI,
+    # and Flask CLI). Blueprint registration above imports every model first.
+    with app.app_context():
+        db.create_all()
+        # This project predates migrations. Keep existing local SQLite installs
+        # compatible with the credential field added for verified login.
+        if db.engine.dialect.name == "sqlite":
+            columns = {column["name"] for column in inspect(db.engine).get_columns("users")}
+            if "password_hash" not in columns:
+                with db.engine.begin() as connection:
+                    connection.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
+
     # ── Health check ──────────────────────────────────────────────
     @app.get("/api/health")
     def health():
         return jsonify({
             "ok": True,
             "service": "omnicare",
-            "ai": "live" if app.config["GEMINI_API_KEY"] else "mock",
+            "ai": "configured" if app.config["GEMINI_API_KEY"] else "not_configured",
             "maps": "live" if app.config["ORS_API_KEY"] else "estimate",
-            "demo_mode": app.config["DEMO_MODE"],
         })
 
     # ── Errors ────────────────────────────────────────────────────
@@ -79,13 +90,7 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-
-        from seed import seed_all
-        seed_all()
-
-    ai_mode = "LIVE" if Config.GEMINI_API_KEY else "MOCK (set GEMINI_API_KEY)"
+    ai_mode = "CONFIGURED" if Config.GEMINI_API_KEY else "NOT CONFIGURED (set GEMINI_API_KEY)"
 
     print("\n" + "─" * 62)
     print("  OmniCare — Healthcare Operating System")
@@ -94,7 +99,6 @@ if __name__ == "__main__":
     print(f"  Health   http://localhost:5000/api/health")
     print(f"  AI       {ai_mode}")
     print(f"  Maps     {'LIVE' if Config.ORS_API_KEY else 'ESTIMATE'}")
-    print(f"  Demo     {Config.DEMO_MODE}  (no login required)")
     print("─" * 62 + "\n")
 
     app.run(debug=Config.DEBUG, port=5000)

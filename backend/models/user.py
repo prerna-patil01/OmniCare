@@ -1,6 +1,8 @@
 import uuid
 from datetime import datetime
 
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from extensions import db
 
 
@@ -11,6 +13,7 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(200), unique=True, index=True)
     phone = db.Column(db.String(20), unique=True, index=True)
+    password_hash = db.Column(db.String(255))
 
     # ABHA — the national health ID. Stored, never sent to a model.
     abha_id = db.Column(db.String(20), unique=True, index=True)
@@ -41,3 +44,9 @@ class User(db.Model):
         if not self.abha_id:
             return None
         return f"····{self.abha_id[-4:]}"
+
+    def set_password(self, password: str) -> None:
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password: str) -> bool:
+        return bool(self.password_hash and check_password_hash(self.password_hash, password))

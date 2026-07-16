@@ -56,7 +56,7 @@ class LLMClient:
                 genai.configure(api_key=self.api_key)
                 self._client = genai
             except ImportError:
-                logger.warning("google-generativeai not installed — running in mock mode")
+                logger.warning("google-generativeai is not installed")
 
     # ── Public API ────────────────────────────────────────────────
 
@@ -76,7 +76,7 @@ class LLMClient:
         it is a random number with a decimal point.
         """
         if not self._client:
-            return self._mock(prompt)
+            raise LLMError("Gemini is not configured. Set GEMINI_API_KEY before using AI features.")
 
         started = time.perf_counter()
 
@@ -148,20 +148,3 @@ class LLMClient:
             return json.loads(candidate)
         except json.JSONDecodeError as exc:
             raise LLMError(f"Malformed JSON from model: {exc}") from exc
-
-    # ── Mock mode ─────────────────────────────────────────────────
-
-    def _mock(self, prompt: str) -> LLMResponse:
-        """
-        No API key? Return a plausible shape so the app still runs.
-
-        This is not a fallback for production. It exists so the frontend
-        team is never blocked on a key, and so the demo cannot die because
-        of a rate limit at the worst possible moment.
-        """
-        logger.info("LLM mock mode — no GEMINI_API_KEY set")
-        return LLMResponse(
-            text='{"mock": true, "note": "Set GEMINI_API_KEY for live inference."}',
-            model="mock",
-            latency_ms=0,
-        )

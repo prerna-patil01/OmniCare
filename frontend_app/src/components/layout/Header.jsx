@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Menu, X, Siren } from "lucide-react";
@@ -7,14 +7,16 @@ import UniversalSearch from "./UniversalSearch";
 import ProfileDropdown from "./ProfileDropdown";
 import ThemeToggle from "../ui/ThemeToggle";
 import { PRIMARY_NAV } from "../../data/nav";
-import { DEMO_USER } from "../../data/user";
+import authService from "../../services/authService";
 import { cn } from "../../lib/cn";
 import { EASE } from "../../lib/motion";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const session = `${DEMO_USER.name.split(" ")[0].toUpperCase()} // PATIENT`;
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null"));
+  useEffect(() => { authService.me().then(setUser).catch(() => setUser(null)); }, []);
+  const session = user ? `${user.name.split(" ")[0].toUpperCase()} // PATIENT` : "PATIENT";
 
   return (
     <header className="sticky top-0 z-50 border-b border-line glass">

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Moon } from "lucide-react";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../services/context/ThemeContext";
 import { cn } from "../../lib/cn";
 import { EASE } from "../../lib/motion";
 

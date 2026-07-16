@@ -4,11 +4,12 @@ from flask import jsonify
 
 
 def ok(data=None, **extra):
+    status = extra.pop("status", 200)
     payload = {"ok": True}
     if data is not None:
         payload["data"] = data
     payload.update(extra)
-    return jsonify(payload), 200
+    return jsonify(payload), status
 
 
 def error(message, status=400, **extra):

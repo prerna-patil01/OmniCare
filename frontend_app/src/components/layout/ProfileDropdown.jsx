@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   User, HeartPulse, FolderHeart, CalendarDays, FlaskConical, Pill,
@@ -5,7 +6,7 @@ import {
 } from "lucide-react";
 import Dropdown, { DropdownItem, DropdownDivider } from "../ui/Dropdown";
 import Avatar from "../ui/Avatar";
-import { DEMO_USER } from "../../data/user";
+import authService from "../../services/authService";
 
 const ITEMS = [
   { label: "My Profile", icon: User, to: "/profile" },
@@ -23,21 +24,24 @@ const ITEMS = [
 
 export default function ProfileDropdown() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null"));
+  useEffect(() => { authService.me().then(setUser).catch(() => setUser(null)); }, []);
+  const signOut = () => { authService.clearSession(); navigate("/login"); };
 
   return (
     <Dropdown
       width="w-[264px]"
       trigger={
         <button className="rounded-full outline-none transition-transform hover:scale-[1.04]">
-          <Avatar name={DEMO_USER.name} size={38} />
+          <Avatar name={user?.name || "Patient"} size={38} />
         </button>
       }
     >
       <div className="mb-1 flex items-center gap-3 px-3 py-3">
-        <Avatar name={DEMO_USER.name} size={40} />
+        <Avatar name={user?.name || "Patient"} size={40} />
         <div className="min-w-0">
-          <p className="truncate text-[14px] font-semibold text-fg">{DEMO_USER.name}</p>
-          <p className="truncate text-[12px] text-fg-muted">{DEMO_USER.email}</p>
+          <p className="truncate text-[14px] font-semibold text-fg">{user?.name || "Patient"}</p>
+          <p className="truncate text-[12px] text-fg-muted">{user?.email || user?.phone || ""}</p>
         </div>
       </div>
       <DropdownDivider />
@@ -51,7 +55,7 @@ export default function ProfileDropdown() {
       </div>
 
       <DropdownDivider />
-      <DropdownItem icon={LogOut} tone="danger" onClick={() => navigate("/login")}>
+      <DropdownItem icon={LogOut} tone="danger" onClick={signOut}>
         Log out
       </DropdownItem>
     </Dropdown>

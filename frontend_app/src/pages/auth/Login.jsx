@@ -8,6 +8,7 @@ import Input from "../../components/ui/Input";
 import Checkbox from "../../components/ui/Checkbox";
 import { cascade, riseIn, EASE } from "../../lib/motion";
 import { cn } from "../../lib/cn";
+import authService from "../../services/authService";
 
 /** Google mark — inline so we never depend on a remote asset for auth. */
 function GoogleIcon({ size = 18 }) {
@@ -55,11 +56,23 @@ export default function Login() {
     return Object.keys(e).length === 0;
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!validate()) return;
     setLoading(true);
-    // Frontend-only: simulate the handshake, then enter the OS.
-    setTimeout(() => navigate("/dashboard"), 750);
+    try {
+      const credentials = method === "email"
+        ? { email: fields.email, password: fields.password }
+        : method === "abha"
+          ? { abha_id: fields.abha.replace(/\D/g, "") }
+          : { phone: fields.phone };
+      const session = await authService.login(credentials);
+      authService.storeSession(session, remember);
+      navigate("/dashboard");
+    } catch (error) {
+      setErrors({ form: error?.response?.data?.error || "Unable to sign in." });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -101,9 +114,7 @@ export default function Login() {
                     transition={{ delay: 0.05 * i, duration: 0.4, ease: EASE }}
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.99 }}
-                    onClick={() =>
-                      m.kind === "oauth" ? navigate("/dashboard") : setMethod(m.id)
-                    }
+                    onClick={() => m.kind === "oauth" ? setMethod("email") : setMethod(m.id)}
                     className={cn(
                       "group flex h-[54px] items-center gap-3.5 rounded-[16px] border border-line bg-card px-5 text-left",
                       "text-[14.5px] font-medium text-fg transition-all duration-250",
@@ -140,6 +151,7 @@ export default function Login() {
                 </button>
 
                 <div className="grid gap-5">
+                  {errors.form && <p className="rounded-xl bg-vital-red/10 px-3 py-2 text-sm text-vital-red">{errors.form}</p>}
                   {method === "email" && (
                     <>
                       <Input

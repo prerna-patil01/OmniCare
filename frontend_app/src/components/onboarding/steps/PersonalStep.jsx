@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { User, Calendar, Ruler, Weight, Phone } from "lucide-react";
+import { User, Mail, Lock, Calendar, Ruler, Weight, Phone } from "lucide-react";
 import Input from "../../ui/Input";
 import Select from "../../ui/Select";
 import Badge from "../../ui/Badge";
@@ -35,6 +35,26 @@ export default function PersonalStep({ data, update, errors }) {
         onChange={(e) => update("name", e.target.value)}
         error={errors.name}
       />
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <Input
+          label="Email address"
+          type="email"
+          icon={Mail}
+          value={data.email}
+          onChange={(e) => update("email", e.target.value)}
+          error={errors.email}
+        />
+        <Input
+          label="Password"
+          type="password"
+          icon={Lock}
+          value={data.password}
+          onChange={(e) => update("password", e.target.value)}
+          error={errors.password}
+          hint="At least 8 characters."
+        />
+      </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <Input

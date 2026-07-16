@@ -6,7 +6,6 @@ from flask import Blueprint, request
 
 from extensions import db
 from models import HealthProfile, Lifestyle, MedicalHistory
-from services import WearableSync
 from utils import current_user, ok, error, require_auth
 
 profile_bp = Blueprint("profile", __name__, url_prefix="/api/profile")
@@ -86,13 +85,7 @@ def onboard():
     user.onboarded = True
     db.session.commit()
 
-    # ── Step 4: connections ───────────────────────────────────────
-    # If they connected a wearable, seed the stream so the dashboard has
-    # something real to show immediately.
     connections = body.get("connections", [])
-    if any(c in connections for c in ("appleHealth", "googleFit", "smartWatch")):
-        WearableSync.seed_stream(user.id, days=14)
-
     return ok({"user": user.to_dict(), "connections": connections})
 
 

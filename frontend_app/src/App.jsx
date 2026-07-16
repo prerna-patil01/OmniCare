@@ -1,16 +1,13 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import {
-  Stethoscope, HeartHandshake, CalendarDays, FolderHeart, FlaskConical,
-  Pill, Sparkles, Activity, Radar, ShieldCheck, Siren, Car,
-} from "lucide-react";
 
 import AppLayout from "./components/layout/AppLayout";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
-import Placeholder from "./pages/Placeholder";
+import Profile from "./pages/profile";
+import Operations from "./pages/Operations";
+import { Omni, SOS, Vitals } from "./pages/Clinical";
 
 export default function App() {
   const location = useLocation();
@@ -26,18 +23,19 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
 
-          <Route path="/doctors" element={<Placeholder icon={Stethoscope} title="Find Doctors" description="Search by specialisation, symptom, distance, fee and rating. Video, in-clinic and second opinions in one flow." />} />
-          <Route path="/care" element={<Placeholder icon={HeartHandshake} title="Care Services" description="Nurses, caretakers, ASHA and ANM workers, physiotherapists, dieticians and home sample collection — booked by the hour." />} />
-          <Route path="/appointments" element={<Placeholder icon={CalendarDays} title="Appointments" description="Every consultation — online, video and in-person — on one calendar." />} />
-          <Route path="/rides" element={<Placeholder icon={Car} title="Rides" description="Uber, Ola and Google Maps — destination pre-filled from your appointment, ETA tracked against your slot." />} />
-          <Route path="/records" element={<Placeholder icon={FolderHeart} title="Health Records" description="A single timeline for reports, prescriptions, scans, notes and vaccinations. Categorised automatically." />} />
-          <Route path="/reports" element={<Placeholder icon={FlaskConical} title="Reports & Labs" description="Upload a report and Omni extracts biomarkers, flags abnormal values and explains what they mean." />} />
-          <Route path="/pharmacy" element={<Placeholder icon={Pill} title="Pharmacy" description="Prescription upload, price comparison, availability and delivery — connected to your records." />} />
-          <Route path="/omni" element={<Placeholder icon={Sparkles} title="Ask Omni" description="A clinical copilot that probes deeper instead of guessing. Text, voice, images and PDFs." />} />
-          <Route path="/insights" element={<Placeholder icon={Activity} title="Health Insights" description="Sleep, stress, hydration, activity, nutrition and heart health — trended weekly and monthly." />} />
-          <Route path="/intelligence" element={<Placeholder icon={Radar} title="Disease Intelligence" description="Regional outbreak trends, air quality, seasonal risk and public health alerts near you." />} />
-          <Route path="/insurance" element={<Placeholder icon={ShieldCheck} title="Insurance" description="Policies, coverage, cashless network and claim tracking in one place." />} />
-          <Route path="/sos" element={<Placeholder icon={Siren} title="Emergency SOS" description="One tap reaches your hospital, ambulance, primary doctor and emergency contacts with your live location and medical summary." />} />
+          <Route path="/doctors" element={<Operations type="doctors" />} />
+          <Route path="/care" element={<Operations type="care" />} />
+          <Route path="/appointments" element={<Operations type="appointments" />} />
+          <Route path="/rides" element={<Operations type="rides" />} />
+          <Route path="/records" element={<Operations type="records" />} />
+          <Route path="/reports" element={<Operations type="reports" />} />
+          <Route path="/pharmacy" element={<Operations type="pharmacy" />} />
+          <Route path="/omni" element={<Omni />} />
+          <Route path="/insights" element={<Vitals />} />
+          <Route path="/intelligence" element={<Operations type="intelligence" />} />
+          <Route path="/twin" element={<Operations type="twin" />} />
+          <Route path="/insurance" element={<Operations type="insurance" />} />
+          <Route path="/sos" element={<SOS />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

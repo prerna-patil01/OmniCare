@@ -10,6 +10,8 @@ import MedicalStep from "../../components/onboarding/steps/MedicalStep";
 import LifestyleStep from "../../components/onboarding/steps/LifestyleStep";
 import ConnectionsStep from "../../components/onboarding/steps/ConnectionsStep";
 import { slideStep, riseIn, EASE } from "../../lib/motion";
+import authService from "../../services/authService";
+import profileService from "../../services/profileService";
 
 const STEPS = [
   { label: "Personal", title: "Let's start with you", sub: "The basics your care team always needs first." },
@@ -19,7 +21,7 @@ const STEPS = [
 ];
 
 const INITIAL = {
-  name: "", dob: "", gender: "", height: "", weight: "", bloodGroup: "", emergencyContact: "",
+  name: "", email: "", password: "", dob: "", gender: "", height: "", weight: "", bloodGroup: "", emergencyContact: "",
   allergies: [], currentDiseases: [], pastDiseases: [], surgeries: [], medications: [], familyHistory: [],
   smoking: "", alcohol: "", foodHabits: "", exercise: "", stress: "", hydration: "", sleep: "", occupation: "",
   connections: [],
@@ -43,6 +45,8 @@ export default function Register() {
     if (step !== 0) return true;
     const e = {};
     if (!data.name.trim()) e.name = "Required";
+    if (!/^\S+@\S+\.\S+$/.test(data.email)) e.email = "Enter a valid email address";
+    if (data.password.length < 8) e.password = "Use at least 8 characters";
     if (!data.dob) e.dob = "Required";
     if (!data.gender) e.gender = "Required";
     if (!data.height || +data.height < 50) e.height = "Enter a valid height in cm";
@@ -53,11 +57,26 @@ export default function Register() {
     return Object.keys(e).length === 0;
   };
 
-  const next = () => {
+  const next = async () => {
     if (!validateStep()) return;
     if (step === STEPS.length - 1) {
       setSaving(true);
-      setTimeout(() => navigate("/dashboard"), 850);
+      try {
+        const session = await authService.register({ name: data.name, email: data.email, password: data.password });
+        authService.storeSession(session);
+        await authService.me();
+        await profileService.onboard({
+          personal: data,
+          medical: data,
+          lifestyle: data,
+          connections: data.connections,
+        });
+        navigate("/dashboard");
+      } catch (error) {
+        setErrors({ form: error?.response?.data?.error || "Unable to create your account." });
+      } finally {
+        setSaving(false);
+      }
       return;
     }
     setDir(1);
@@ -91,6 +110,7 @@ export default function Register() {
           className="rounded-xl2 border border-line bg-card p-7 shadow-lift sm:p-8"
         >
           <StepIndicator steps={STEPS} current={step} />
+          {errors.form && <p className="mt-4 rounded-xl bg-vital-red/10 px-3 py-2 text-sm text-vital-red">{errors.form}</p>}
 
           <div className="relative">
             <AnimatePresence mode="wait" custom={dir} initial={false}>

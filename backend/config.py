@@ -46,10 +46,3 @@ class Config:
     UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
     ALLOWED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".webp"}
-
-    # ── Demo ──────────────────────────────────────────────────────
-    # A hackathon has three minutes and no time for a signup flow. The demo
-    # user is seeded and auto-authenticated. Real auth exists and works —
-    # it just isn't in the critical path of the pitch.
-    DEMO_MODE = os.getenv("DEMO_MODE", "true").lower() == "true"
-    DEMO_USER_EMAIL = "prerna@omnicare.health"

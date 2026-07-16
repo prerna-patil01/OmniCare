@@ -1,6 +1,7 @@
-"""Auth. Real JWT, plus a demo path that skips the login theatre."""
+"""Credential authentication and JWT session issuance."""
 
-from flask import Blueprint, current_app, request
+from flask import Blueprint, request
+from sqlalchemy.exc import IntegrityError
 
 from extensions import db
 from models import User
@@ -13,11 +14,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 @auth_bp.post("/login")
 def login():
     """
-    Passwordless. Email or phone identifies; a token is issued.
-
-    Not production auth. Production needs OTP verification, and building that
-    for a hackathon is an hour spent on the one part of the product no judge
-    will ever test.
+    Email/password login verifies the stored password hash.
     """
     body = request.get_json() or {}
     email = body.get("email")
@@ -35,6 +32,11 @@ def login():
     if not user:
         return error("No account found. Create one first.", 404)
 
+    if email and not user.verify_password(body.get("password") or ""):
+        return error("Email or password is incorrect.", 401)
+    if not email:
+        return error("Phone and ABHA sign-in require a verified identity provider.", 501)
+
     return ok({"user": user.to_dict(), "token": generate_token(user.id)})
 
 
@@ -42,22 +44,36 @@ def login():
 def register():
     body = request.get_json() or {}
 
-    if not body.get("name"):
+    name = (body.get("name") or "").strip()
+    email = (body.get("email") or "").strip().lower()
+    password = body.get("password") or ""
+    if not name:
         return error("Name is required.")
-
-    if body.get("email") and User.query.filter_by(email=body["email"]).first():
+    if not email:
+        return error("Email is required.")
+    if len(password) < 8:
+        return error("Password must be at least 8 characters.")
+    if User.query.filter_by(email=email).first():
         return error("An account with that email already exists.", 409)
+    phone = (body.get("phone") or "").strip() or None
+    if phone and User.query.filter_by(phone=phone).first():
+        return error("An account with that phone number already exists.", 409)
 
     user = User(
-        name=body["name"],
-        email=body.get("email"),
-        phone=body.get("phone"),
+        name=name,
+        email=email,
+        phone=phone,
         abha_id=body.get("abha_id"),
         auth_provider=body.get("provider", "email"),
         region=body.get("region", "Artist Village"),
     )
+    user.set_password(password)
     db.session.add(user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return error("An account with those details already exists.", 409)
 
     # A new user gets scoped, time-boxed consent grants immediately. Not a
     # checkbox — actual grants, visible in the ledger, revocable from day one.

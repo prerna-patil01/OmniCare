@@ -46,21 +46,6 @@ def ingest():
     return ok(reading.to_dict(), status=201)
 
 
-@vitals_bp.post("/seed")
-@require_auth
-def seed():
-    """
-    Generate a demo stream with a real clinical signal in it.
-
-    Resting HR drifts up 8%, HRV drifts down 18% — a febrile response the patient
-    has not noticed. The demo works because the data actually contains the thing
-    the AI claims to find.
-    """
-    user = current_user()
-    count = _sync.seed_stream(user.id, days=14)
-    return ok({"readings": count})
-
-
 def _trend(history):
     if len(history) < 6:
         return {}
@@ -104,8 +89,7 @@ def connect(provider):
     """
     Begin a wearable connection. Returns the OAuth URL (architected).
 
-    Fitbit and Google Fit are stubbed with honest status; the synthetic stream
-    carries the real signal so nothing downstream breaks.
+    Returns the configured provider handoff metadata.
     """
     client_id = current_app.config.get("GOOGLE_CLIENT_ID", "")
     return ok(WearableOAuth.connect_url(provider, client_id))
@@ -114,7 +98,4 @@ def connect(provider):
 @vitals_bp.post("/connect/<provider>/complete")
 @require_auth
 def connect_complete(provider):
-    """After the (stubbed) OAuth, seed the stream as if the device connected."""
-    user = current_user()
-    count = WearableOAuth.sync_after_auth(user.id, provider)
-    return ok({"connected": provider, "readings_synced": count})
+    return error("Wearable sync completion must be handled by the provider webhook.", 501)

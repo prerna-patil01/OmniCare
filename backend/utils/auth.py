@@ -1,9 +1,5 @@
 """
-JWT auth.
-
-Real and working. In DEMO_MODE, a request without a token is silently
-authenticated as the seeded demo user — because a hackathon has three minutes
-and nobody is going to watch you type a password.
+JWT authentication.
 """
 
 from datetime import datetime
@@ -44,8 +40,7 @@ def current_user() -> User | None:
     """
     Resolve the caller.
 
-    Bearer token first. If absent and DEMO_MODE is on, fall back to the seeded
-    demo user — loudly documented, so nobody ships this by accident.
+    Resolve only a verified bearer token.
     """
     if hasattr(g, "user"):
         return g.user
@@ -56,12 +51,6 @@ def current_user() -> User | None:
         if user_id:
             g.user = User.query.get(user_id)
             return g.user
-
-    if current_app.config.get("DEMO_MODE"):
-        g.user = User.query.filter_by(
-            email=current_app.config["DEMO_USER_EMAIL"]
-        ).first()
-        return g.user
 
     return None
 
